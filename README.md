@@ -1,6 +1,6 @@
-# ARUNAI — Erode Emergency Dispatch Grid
+# UYIRPATH — Erode Emergency Dispatch Grid
 
-ARUNAI is a self-contained emergency ambulance dispatch and route-optimisation
+UYIRPATH is a self-contained emergency ambulance dispatch and route-optimisation
 system for Erode, Tamil Nadu. It uses **real OpenStreetMap road geometry**,
 a **custom Java 21 Dijkstra engine**, SQLite persistence, and a vanilla
 JavaScript/Leaflet operations interface.
