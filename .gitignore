@@ -1,0 +1,27 @@
+# Build output
+target/
+*.class
+*.jar
+!mvnw
+!.mvn/wrapper/maven-wrapper.jar
+
+# Runtime database (created at first run)
+data/arunai.db
+data/arunai.db-shm
+data/arunai.db-wal
+data/arunai.db.bak
+
+# Downloaded OSM response cache
+data/osm/*.json
+data/osm/*.gz
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

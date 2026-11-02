@@ -1,0 +1,12 @@
+{
+  "_comment": "Example body for POST /api/settings. All keys are optional.",
+  "operating_area_min_lat": 11.18,
+  "operating_area_min_lon": 77.40,
+  "operating_area_max_lat": 11.55,
+  "operating_area_max_lon": 77.85,
+  "simulation_speed": 8,
+  "simulation_paused": false,
+  "return_policy": "ALWAYS_RETURN",
+  "demo_admission": true,
+  "osm_bbox": "11.20,77.45,11.50,77.82"
+}

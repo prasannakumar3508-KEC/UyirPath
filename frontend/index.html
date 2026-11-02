@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="UYIRPATH — Emergency ambulance dispatch and route optimisation for Erode, powered by Java and OpenStreetMap.">
+  <title>UYIRPATH · Erode Emergency Dispatch Grid</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+
+<body>
+  <svg class="svg-sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-live" viewBox="0 0 24 24">
+      <path d="M12 3v3M12 18v3M3 12h3M18 12h3" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="12" cy="12" r="8" opacity=".38" />
+    </symbol>
+    <symbol id="i-intake" viewBox="0 0 24 24">
+      <path d="M12 5v14M5 12h14" />
+      <path d="M4 4h4M16 4h4M4 20h4M16 20h4" opacity=".45" />
+    </symbol>
+    <symbol id="i-intel" viewBox="0 0 24 24">
+      <circle cx="5" cy="18" r="2" />
+      <circle cx="19" cy="6" r="2" />
+      <path d="M7 18h4a3 3 0 0 0 3-3V9a3 3 0 0 1 3-3" />
+      <path d="M9 6h5" opacity=".4" />
+    </symbol>
+    <symbol id="i-ambulance" viewBox="0 0 24 24">
+      <path d="M3 16V8h11l4 4h3v4" />
+      <path d="M3 16h2M9 16h5M18 16h3" />
+      <circle cx="6.5" cy="17.5" r="2" />
+      <circle cx="16" cy="17.5" r="2" />
+      <path d="M8 10v4M6 12h4" opacity=".7" />
+    </symbol>
+    <symbol id="i-hospital" viewBox="0 0 24 24">
+      <path d="M4 21V7l8-4 8 4v14" />
+      <path d="M9 21v-5h6v5" />
+      <path d="M12 8v6M9 11h6" />
+    </symbol>
+    <symbol id="i-road" viewBox="0 0 24 24">
+      <path d="M7 21 10 3M17 21 14 3" />
+      <path d="M12 5v3M12 12v3M12 19v2" opacity=".55" />
+    </symbol>
+    <symbol id="i-history" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 7v5l3 2" />
+      <path d="M4 4 2 6M20 4l2 2" opacity=".4" />
+    </symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24">
+      <path d="M4 7h9M17 7h3M4 17h3M11 17h9" />
+      <circle cx="15" cy="7" r="2" />
+      <circle cx="9" cy="17" r="2" />
+    </symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24">
+      <path d="M20 6v5h-5" />
+      <path d="M20 11a8 8 0 1 0-2.3 6.7" />
+    </symbol>
+    <symbol id="i-locate" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+      <circle cx="12" cy="12" r="7" opacity=".4" />
+    </symbol>
+    <symbol id="i-play" viewBox="0 0 24 24">
+      <path d="m8 5 11 7-11 7z" />
+    </symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24">
+      <path d="M8 5v14M16 5v14" />
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24">
+      <path d="m6 6 12 12M18 6 6 18" />
+    </symbol>
+    <symbol id="i-warning" viewBox="0 0 24 24">
+      <path d="M12 3 2.5 20h19z" />
+      <path d="M12 9v5M12 17v.5" />
+    </symbol>
+    <symbol id="i-search" viewBox="0 0 24 24">
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="m16 16 5 5" />
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24">
+      <path d="M5 12h14M14 7l5 5-5 5" />
+    </symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24">
+      <path d="M13 2 4 14h6l-1 8 9-12h-6z" />
+    </symbol>
+  </svg>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 44 44">
+            <path d="M22 2 40 12v20L22 42 4 32V12z" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5" />
+            <path d="M10 23h6l3-7 4 14 4-9 3 2h4" fill="none" stroke="currentColor" stroke-width="2.4"
+              stroke-linecap="square" />
+            <circle cx="22" cy="23" r="17" fill="none" stroke="currentColor" stroke-width=".8" opacity=".25" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <strong>UYIRPATH</strong>
+          <span>Erode Emergency Grid</span>
+        </div>
+      </div>
+
+      <div class="ops-chip">
+        <span class="pulse-dot"></span>
+        <div><b>OPS / DEMO</b><small>No live GPS or traffic</small></div>
+      </div>
+
+      <nav class="nav" aria-label="Operations screens">
+        <button class="nav-item active" data-screen="live"><svg>
+            <use href="#i-live" />
+          </svg><span>Live Operations</span><b class="nav-badge" id="navActiveCount">0</b></button>
+        <button class="nav-item" data-screen="intake"><svg>
+            <use href="#i-intake" />
+          </svg><span>Emergency Intake</span></button>
+        <button class="nav-item" data-screen="intelligence"><svg>
+            <use href="#i-intel" />
+          </svg><span>Dispatch Intelligence</span></button>
+        <button class="nav-item" data-screen="ambulances"><svg>
+            <use href="#i-ambulance" />
+          </svg><span>Ambulances</span></button>
+        <button class="nav-item" data-screen="hospitals"><svg>
+            <use href="#i-hospital" />
+          </svg><span>Hospitals</span></button>
+        <button class="nav-item" data-screen="network"><svg>
+            <use href="#i-road" />
+          </svg><span>Road Network</span></button>
+        <button class="nav-item" data-screen="history"><svg>
+            <use href="#i-history" />
+          </svg><span>History &amp; Analytics</span></button>
+        <button class="nav-item" data-screen="settings"><svg>
+            <use href="#i-settings" />
+          </svg><span>Settings</span></button>
+      </nav>
+
+      <div class="sidebar-foot">
+        <div class="network-chip" id="sidebarNetwork">OSM · CONNECTING</div>
+        <p>Java 21 · SQLite · Leaflet<br>© OpenStreetMap contributors</p>
+        <span class="version">ARUNAI v1.0 / ACADEMIC PROTOTYPE</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="page-heading">
+          <span class="eyebrow" id="pageEyebrow">ERODE · OPERATIONS BOARD</span>
+          <h1 id="pageTitle">Live Operations</h1>
+        </div>
+        <div class="topbar-actions">
+          <button class="sim-chip" id="topSimBtn" title="Pause or resume demonstration movement">
+            <span class="pulse-dot"></span><span id="topSimLabel">SIMULATION</span>
+          </button>
+          <div class="clock">
+            <strong id="clockTime">--:--:--</strong>
+            <small id="clockDate">ERODE · IST</small>
+          </div>
+          <button class="icon-btn" id="refreshBtn" title="Refresh all data"><svg>
+              <use href="#i-refresh" />
+            </svg></button>
+        </div>
+      </header>
+
+      <div class="global-notice hidden" id="dataNotice"></div>
+
+      <div class="screens">
+        <!-- A. LIVE OPERATIONS ------------------------------------------------>
+        <section class="screen active" data-screen="live">
+          <div class="kpi-strip">
+            <div class="kpi"><span class="kpi-label">ACTIVE INCIDENTS</span><strong id="kpiActive">—</strong><small
+                id="kpiActiveNote">awaiting data</small></div>
+            <div class="kpi"><span class="kpi-label">AMBULANCES READY</span><strong id="kpiAvailable">—</strong><small
+                id="kpiAvailableNote">of five units</small></div>
+            <div class="kpi"><span class="kpi-label">AVG RESPONSE</span><strong
+                id="kpiAvgResponse">—</strong><small>from stored audit events</small></div>
+            <div class="kpi wide"><span class="kpi-label">ROAD NETWORK</span><strong id="kpiNetwork">—</strong><small
+                id="kpiNetworkNote">OpenStreetMap</small></div>
+          </div>
+
+          <div class="ops-grid">
+            <section class="panel map-panel">
+              <div class="map-toolbar">
+                <div class="map-toolbar-title">
+                  <span class="live-dot"></span>
+                  <div><b>ERODE OPERATIONS MAP</b><small id="mapSubLabel">Awaiting road network…</small></div>
+                </div>
+                <div class="map-tools">
+                  <div class="seg mini" role="group" aria-label="Map style">
+                    <button data-mapstyle="dark" class="active">OPS</button>
+                    <button data-mapstyle="osm">OSM</button>
+                  </div>
+                  <button class="tool-btn" id="zoomInBtn" title="Zoom in">+</button>
+                  <button class="tool-btn" id="zoomOutBtn" title="Zoom out">−</button>
+                  <button class="tool-btn" id="resetViewBtn" title="Reset to Erode">⌂</button>
+                  <button class="tool-btn wide" id="fitRouteBtn" title="Fit active route">FIT ROUTE</button>
+                </div>
+              </div>
+              <div class="map-frame">
+                <div id="opsMap" class="map"></div>
+                <div class="map-legend" id="mapLegend">
+                  <span><i class="lg-amb"></i>Ambulance</span>
+                  <span><i class="lg-hosp"></i>Hospital</span>
+                  <span><i class="lg-critical"></i>Critical</span>
+                  <span><i class="lg-serious"></i>Serious</span>
+                  <span><i class="lg-minor"></i>Minor</span>
+                  <span><i class="lg-closure"></i>Closure</span>
+                </div>
+                <div class="map-layers">
+                  <label><input type="checkbox" data-layer="ambulances" checked> Units</label>
+                  <label><input type="checkbox" data-layer="hospitals" checked> Hospitals</label>
+                  <label><input type="checkbox" data-layer="incidents" checked> Incidents</label>
+                  <label><input type="checkbox" data-layer="routes" checked> Routes</label>
+                  <label><input type="checkbox" data-layer="closures" checked> Closures</label>
+                </div>
+                <div class="map-coords" id="mapCoords">11.3400°N / 77.7200°E</div>
+              </div>
+            </section>
+
+            <aside class="ops-rail">
+              <section class="panel queue-panel">
+                <div class="panel-head">
+                  <div><span class="eyebrow">AUTO PRIORITY</span>
+                    <h2>Dispatch queue <em id="queueCount">0</em></h2>
+                  </div>
+                  <span class="tag neutral">FIFO within severity</span>
+                </div>
+                <div class="queue-list" id="queueList"></div>
+              </section>
+
+              <section class="panel active-panel">
+                <div class="panel-head">
+                  <div><span class="eyebrow">SELECTED ACTIVE TRIP</span>
+                    <h2>Dispatch detail</h2>
+                  </div>
+                  <button class="text-btn" id="openIntelBtn">INTEL <svg>
+                      <use href="#i-arrow" />
+                    </svg></button>
+                </div>
+                <div id="activeDispatchCard" class="active-dispatch"></div>
+              </section>
+
+              <section class="panel activity-panel">
+                <div class="panel-head">
+                  <div><span class="eyebrow">AUDIT STREAM</span>
+                    <h2>Recent activity</h2>
+                  </div>
+                </div>
+                <div class="activity-feed" id="activityFeed"></div>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <!-- B. EMERGENCY INTAKE ---------------------------------------------->
+        <section class="screen" data-screen="intake">
+          <div class="intake-grid">
+            <form class="panel intake-form" id="intakeForm">
+              <div class="panel-head">
+                <div><span class="eyebrow">NEW CALL / OPERATOR INPUT</span>
+                  <h2>Register emergency</h2>
+                </div>
+                <span class="tag orange">AUTO-DISPATCH</span>
+              </div>
+
+              <fieldset class="form-block">
+                <legend><span>01</span> Incident</legend>
+                <label class="field">
+                  <span>Incident type</span>
+                  <select id="incidentType" required>
+                    <option value="ROAD_TRAFFIC_ACCIDENT">Road Traffic Accident</option>
+                    <option value="CARDIAC_EMERGENCY">Cardiac Emergency</option>
+                    <option value="GENERAL_MEDICAL">General Medical Emergency</option>
+                    <option value="OTHER">Other Emergency</option>
+                  </select>
+                </label>
+                <div class="field">
+                  <span>Severity</span>
+                  <div class="segmented severity-seg" id="severitySeg">
+                    <label class="sev-critical"><input type="radio" name="severity" value="CRITICAL"
+                        checked><b>CRITICAL</b><small>Immediate</small></label>
+                    <label class="sev-serious"><input type="radio" name="severity"
+                        value="SERIOUS"><b>SERIOUS</b><small>Urgent</small></label>
+                    <label class="sev-minor"><input type="radio" name="severity"
+                        value="MINOR"><b>MINOR</b><small>Stable</small></label>
+                  </div>
+                </div>
+                <div class="field">
+                  <span>Required hospital facility</span>
+                  <div class="chip-row" id="facilityChips">
+                    <label class="chip"><input type="radio" name="facility" value="GENERAL"
+                        checked><span>GENERAL</span></label>
+                    <label class="chip"><input type="radio" name="facility" value="TRAUMA"><span>TRAUMA</span></label>
+                    <label class="chip"><input type="radio" name="facility" value="CARDIAC"><span>CARDIAC</span></label>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="form-block">
+                <legend><span>02</span> Location</legend>
+                <div class="location-actions">
+                  <button type="button" class="btn ghost" id="gpsBtn"><svg>
+                      <use href="#i-locate" />
+                    </svg>Use browser GPS</button>
+                  <button type="button" class="btn ghost active" id="pickMapBtn"><svg>
+                      <use href="#i-intake" />
+                    </svg>Pick on map</button>
+                </div>
+                <div class="coord-readout" id="intakeCoords">
+                  <span>SELECTED POINT</span><strong>Click the map to place the incident</strong>
+                  <small>Validated against the Erode operating area, then snapped to the nearest OSM node.</small>
+                </div>
+                <p class="micro-copy" id="locationStatus">Browser GPS is optional. Manual map selection always works.
+                </p>
+              </fieldset>
+
+              <fieldset class="form-block">
+                <legend><span>03</span> Notes</legend>
+                <label class="field">
+                  <span>Short description <i>optional · max 500 chars</i></span>
+                  <textarea id="incidentDescription" maxlength="500" rows="3"
+                    placeholder="Landmark, access notes, patient count…"></textarea>
+                </label>
+              </fieldset>
+
+              <div class="form-actions">
+                <button type="submit" class="btn primary" id="submitEmergency">
+                  <svg>
+                    <use href="#i-bolt" />
+                  </svg> Queue &amp; dispatch
+                </button>
+                <span class="micro-copy">Automatically ranks, selects ambulance + hospital, and starts the simulated
+                  trip.</span>
+              </div>
+              <div class="intake-result hidden" id="intakeResult"></div>
+            </form>
+
+            <section class="panel map-panel intake-map-panel">
+              <div class="map-toolbar">
+                <div class="map-toolbar-title">
+                  <span class="live-dot"></span>
+                  <div><b>INCIDENT LOCATION</b><small>Click anywhere inside the operating area</small></div>
+                </div>
+                <span class="tag neutral" id="intakeAreaTag">ERODE AREA</span>
+              </div>
+              <div class="map-frame">
+                <div id="intakeMap" class="map"></div>
+                <div class="map-hint">Click to select · GPS optional · server snaps to road</div>
+              </div>
+              <div class="map-footnote">
+                <svg>
+                  <use href="#i-warning" />
+                </svg>
+                <p>Incident coordinates are snapped to the nearest OSM road node for Dijkstra routing. The map click
+                  itself does not create a road.</p>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- C. DISPATCH INTELLIGENCE ------------------------------------------>
+        <section class="screen" data-screen="intelligence">
+          <div class="screen-bar">
+            <div class="screen-bar-left">
+              <label class="inline-field">EMERGENCY
+                <select id="intelEmergencySelect"></select>
+              </label>
+              <button class="btn ghost small" id="intelRefresh">Refresh</button>
+            </div>
+            <button class="btn ghost small" id="manualToggle">Manual override…</button>
+          </div>
+          <div class="intel-grid">
+            <div id="intelContent" class="intel-main"></div>
+            <aside class="intel-aside">
+              <section class="panel" id="manualPanel" hidden>
+                <div class="panel-head">
+                  <div><span class="eyebrow">EXPLICIT OPERATOR ACTION</span>
+                    <h2>Manual override</h2>
+                  </div>
+                </div>
+                <p class="micro-copy">Only allowed while the emergency is QUEUED. The reason is stored in the dispatch
+                  audit record.</p>
+                <form id="manualForm">
+                  <label class="field"><span>Ambulance</span><select id="manualAmbulance"></select></label>
+                  <label class="field"><span>Hospital</span><select id="manualHospital"></select></label>
+                  <label class="field"><span>Reason (required)</span><textarea id="manualReason" rows="2"
+                      placeholder="Why is the automatic choice being overridden?"></textarea></label>
+                  <button class="btn primary full" type="submit">Record override</button>
+                </form>
+              </section>
+              <section class="panel">
+                <div class="panel-head">
+                  <div><span class="eyebrow">SIMULATION</span>
+                    <h2>Trip state</h2>
+                  </div>
+                </div>
+                <div id="intelSimPanel" class="sim-state"></div>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <!-- D. AMBULANCE MANAGEMENT ------------------------------------------->
+        <section class="screen" data-screen="ambulances">
+          <div class="screen-bar">
+            <div class="sim-controls">
+              <button class="btn ghost small" id="simPauseBtn"><svg>
+                  <use href="#i-pause" />
+                </svg><span>Pause</span></button>
+              <label class="inline-field">SPEED
+                <select id="simSpeed">
+                  <option value="2">2×</option>
+                  <option value="5">5×</option>
+                  <option value="8" selected>8×</option>
+                  <option value="15">15×</option>
+                  <option value="30">30×</option>
+                  <option value="60">60×</option>
+                </select>
+              </label>
+              <span class="tag amber" id="simStateLabel">SIMULATION ACTIVE</span>
+            </div>
+            <span class="micro-copy">Movement is interpolated along Dijkstra geometry — not live GPS.</span>
+          </div>
+          <div class="ambulance-grid" id="ambulanceGrid"></div>
+        </section>
+
+        <!-- E. HOSPITAL MANAGEMENT -------------------------------------------->
+        <section class="screen" data-screen="hospitals">
+          <div class="screen-bar">
+            <div class="screen-bar-left">
+              <span class="tag orange">DEMONSTRATION BED DATA</span>
+              <span class="micro-copy">Occupancy is simulated for this prototype. It is not hospital-reported.</span>
+            </div>
+          </div>
+          <div class="hospital-grid" id="hospitalGrid"></div>
+        </section>
+
+        <!-- F. ROAD NETWORK --------------------------------------------------->
+        <section class="screen" data-screen="network">
+          <div class="network-kpis" id="networkKpis"></div>
+          <div class="network-grid">
+            <div class="stack">
+              <section class="panel source-panel" id="networkSourcePanel"></section>
+              <section class="panel">
+                <div class="panel-head">
+                  <div><span class="eyebrow">OUR DIJKSTRA GRAPH</span>
+                    <h2>Find road segments</h2>
+                  </div>
+                </div>
+                <div class="search-row">
+                  <svg>
+                    <use href="#i-search" />
+                  </svg>
+                  <input id="roadSearch" placeholder="Search road name, e.g. Perundurai Road">
+                  <button class="btn primary small" id="roadSearchBtn">Search</button>
+                </div>
+                <div class="table-wrap">
+                  <table class="data-table" id="roadResults">
+                    <thead>
+                      <tr>
+                        <th>Road</th>
+                        <th>Type</th>
+                        <th>Segment</th>
+                        <th>Traffic</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </section>
+            </div>
+            <div class="stack">
+              <section class="panel">
+                <div class="panel-head">
+                  <div><span class="eyebrow">SIMULATED RESTRICTIONS</span>
+                    <h2>Active closures</h2>
+                  </div>
+                  <button class="btn ghost small" id="recalcRoutes">Recalculate active routes</button>
+                </div>
+                <div id="closureList" class="closure-list"></div>
+                <div id="recalcResults" class="recalc-results"></div>
+              </section>
+              <section class="panel note-panel">
+                <svg>
+                  <use href="#i-warning" />
+                </svg>
+                <div>
+                  <h3>Simulation, not live traffic</h3>
+                  <p>Closures and multipliers are operator simulations stored in SQLite. They alter edge weights and
+                    rerun our Java Dijkstra calculation; they are not connected to any traffic feed.</p>
+                </div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <!-- G. HISTORY AND ANALYTICS ------------------------------------------>
+        <section class="screen" data-screen="history">
+          <div class="analytics-kpis" id="analyticsKpis"></div>
+          <div class="analytics-grid" id="analyticsPanels"></div>
+          <section class="panel history-panel">
+            <div class="panel-head">
+              <div><span class="eyebrow">DURABLE SQLITE RECORDS</span>
+                <h2>Emergency history</h2>
+              </div><span class="tag neutral" id="historyCount">0 records</span>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table" id="historyTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Facility</th>
+                    <th>Status</th>
+                    <th>Ambulance</th>
+                    <th>Hospital</th>
+                    <th>Scene ETA</th>
+                    <th>Created</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <!-- H. SETTINGS -------------------------------------------------------->
+        <section class="screen" data-screen="settings">
+          <div class="settings-grid">
+            <div class="stack">
+              <section class="panel">
+                <div class="panel-head">
+                  <div><span class="eyebrow">GEOGRAPHIC SCOPE</span>
+                    <h2>Operating area</h2>
+                  </div><span class="tag neutral">ERODE</span>
+                </div>
+                <form id="areaForm" class="form-grid">
+                  <label class="field"><span>Min latitude</span><input id="areaMinLat" type="number"
+                      step="0.0001"></label>
+                  <label class="field"><span>Max latitude</span><input id="areaMaxLat" type="number"
+                      step="0.0001"></label>
+                  <label class="field"><span>Min longitude</span><input id="areaMinLon" type="number"
+                      step="0.0001"></label>
+                  <label class="field"><span>Max longitude</span><input id="areaMaxLon" type="number"
+                      step="0.0001"></label>
+                  <div class="form-actions span-2"><button class="btn primary small" type="submit">Save
+                      area</button><span class="micro-copy">Incident validation uses this box.</span></div>
+                </form>
+              </section>
+
+              <section class="panel">
+                <div class="panel-head">
+                  <div><span class="eyebrow">DEMONSTRATION BEHAVIOUR</span>
+                    <h2>Simulation &amp; trip policy</h2>
+                  </div>
+                </div>
+                <form id="simForm" class="form-grid">
+                  <label class="field"><span>Simulation speed</span><select id="settingSpeed">
+                      <option>2</option>
+                      <option>5</option>
+                      <option>8</option>
+                      <option>15</option>
+                      <option>30</option>
+                      <option>60</option>
+                    </select></label>
+                  <label class="field"><span>Return policy</span><select id="settingReturn">
+                      <option value="ALWAYS_RETURN">Always return to base</option>
+                      <option value="RELEASE_AFTER_HANDOVER">Release after handover</option>
+                    </select></label>
+                  <label class="field"><span>Demo admission</span><select id="settingAdmission">
+                      <option value="true">Increment demo occupied beds</option>
+                      <option value="false">Do not change beds</option>
+                    </select></label>
+                  <label class="field"><span>Simulation paused</span><select id="settingPaused">
+                      <option value="false">Running</option>
+                      <option value="true">Paused</option>
+                    </select></label>
+                  <div class="form-actions span-2"><button class="btn primary small" type="submit">Save simulation
+                      settings</button></div>
+                </form>
+              </section>
+
+              <section class="panel">
+                <div class="panel-head">
+                  <div><span class="eyebrow">OSM CACHE / OVERPASS</span>
+                    <h2>Map data</h2>
+                  </div>
+                </div>
+                <div id="settingsMapData"></div>
+                <div class="button-row" style="margin-top:14px">
+                  <button class="btn ghost small" data-import="live">Import live OSM</button>
+                  <button class="btn ghost small" data-import="cache">Load cached OSM</button>
+                  <button class="btn ghost small danger" data-import="fallback">Synthetic fallback</button>
+                </div>
+                <p class="micro-copy">Live import calls Overpass and can take 1–3 minutes. The synthetic fallback is
+                  clearly labelled and is not real road data.</p>
+              </section>
+
+              <section class="panel">
+                <div class="panel-head">
+                  <div><span class="eyebrow">REPEATABLE DEMO</span>
+                    <h2>Reset operational data</h2>
+                  </div><span class="tag red">DESTRUCTIVE</span>
+                </div>
+                <p class="micro-copy">Deletes emergencies, dispatches, events and closures; restores the five ambulances
+                  and hospitals. The imported road network is preserved.</p>
+                <label class="check-row"><input type="checkbox" id="resetHistory"> Insert labelled demonstration
+                  history</label>
+                <button class="btn danger small" id="resetDemoBtn">Reset demo dataset</button>
+              </section>
+            </div>
+
+            <div class="stack">
+              <section class="panel">
+                <div class="panel-head">
+                  <div><span class="eyebrow">DEMONSTRATION BASES</span>
+                    <h2>Ambulance positions</h2>
+                  </div><span class="tag neutral">EDITABLE</span>
+                </div>
+                <div id="ambulanceConfigList" class="config-list"></div>
+              </section>
+              <section class="panel">
+                <div class="panel-head">
+                  <div><span class="eyebrow">VERIFIED OSM LOCATIONS</span>
+                    <h2>Hospital configuration</h2>
+                  </div><span class="tag amber">BEDS SIMULATED</span>
+                </div>
+                <div id="hospitalConfigList" class="config-list"></div>
+              </section>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <h2 id="modalTitle">Detail</h2><button class="icon-btn" id="modalClose"><svg>
+            <use href="#i-close" />
+          </svg></button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <div class="busy-overlay" id="busyOverlay" hidden>
+    <div class="busy-box"><span class="spinner"></span><strong id="busyTitle">Working…</strong>
+      <p id="busyText">Please wait.</p>
+    </div>
+  </div>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
