@@ -19,15 +19,15 @@ Command:
 Actual output summary:
 
 ```text
-[INFO] Running com.arunai.dispatch.graph.DijkstraTest
+[INFO] Running com.uyirpath.dispatch.graph.DijkstraTest
 [INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
-[INFO] Running com.arunai.dispatch.model.EmergencyStatusTest
+[INFO] Running com.uyirpath.dispatch.model.EmergencyStatusTest
 [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-[INFO] Running com.arunai.dispatch.repository.PersistenceInvariantTest
+[INFO] Running com.uyirpath.dispatch.repository.PersistenceInvariantTest
 [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-[INFO] Running com.arunai.dispatch.service.DispatchPlannerTest
+[INFO] Running com.uyirpath.dispatch.service.DispatchPlannerTest
 [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
-[INFO] Running com.arunai.dispatch.service.DispatchQueueTest
+[INFO] Running com.uyirpath.dispatch.service.DispatchQueueTest
 [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
 [INFO] Tests run: 15, Failures: 0, Errors: 0, Skipped: 0
 [INFO] BUILD SUCCESS
@@ -79,7 +79,7 @@ so the closure list cannot briefly revert to a stale entry.
 ```
 
 Observed: `BUILD SUCCESS`; shaded executable produced at
-`target/arunai-dispatch.jar` (~16.7 MB).
+`target/uyirpath-dispatch.jar` (~16.7 MB).
 
 ---
 
@@ -109,7 +109,7 @@ the captured screenshots are in `docs/screenshots/`).
 ### Actual console output (abridged)
 
 ```text
-TITLE ARUNAI · Erode Emergency Dispatch Grid
+TITLE UyirPath · Erode Emergency Dispatch Grid
 KPI_READY 5
 NETWORK_CHIP OSM · OVERPASS
 OPS_MARKERS 9

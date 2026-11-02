@@ -6,10 +6,10 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 
 # Runtime database (created at first run)
-data/arunai.db
-data/arunai.db-shm
-data/arunai.db-wal
-data/arunai.db.bak
+data/uyirpath.db
+data/uyirpath.db-shm
+data/uyirpath.db-wal
+data/uyirpath.db.bak
 
 # Downloaded OSM response cache
 data/osm/*.json

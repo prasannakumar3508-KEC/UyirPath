@@ -1,7 +1,7 @@
 # Database Design
 
 **Engine:** SQLite 3 (WAL mode)  
-**File:** `data/arunai.db` (override with `ARUNAI_DB`)  
+**File:** `data/uyirpath.db` (override with `UYIRPATH_DB`)  
 **Schema:** `src/main/resources/database/schema.sql`
 
 SQLite is the durable source of truth. The in-memory road graph and priority

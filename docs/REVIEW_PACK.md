@@ -8,7 +8,7 @@ and a screenshot checklist.
 
 ## 1. Product identity
 
-**ARUNAI — Erode Emergency Dispatch Grid**
+**UyirPath — Erode Emergency Dispatch Grid**
 
 A dark emergency-operations interface: navy background, signal-orange primary
 actions, teal for live/verified data, red for critical cases. The visual language

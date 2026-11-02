@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.arunai</groupId>
-  <artifactId>arunai-dispatch</artifactId>
+  <groupId>com.uyirpath</groupId>
+  <artifactId>uyirpath-dispatch</artifactId>
   <version>1.0.0</version>
-  <name>Arunai Emergency Dispatch Grid</name>
+  <name>UyirPath Emergency Dispatch Grid</name>
   <description>Emergency ambulance dispatch and route optimisation for Erode, Tamil Nadu</description>
 
   <properties>
@@ -41,7 +41,7 @@
   </dependencies>
 
   <build>
-    <finalName>arunai-dispatch</finalName>
+    <finalName>uyirpath-dispatch</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -68,7 +68,7 @@
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>com.arunai.dispatch.App</mainClass>
+                  <mainClass>com.uyirpath.dispatch.App</mainClass>
                 </transformer>
               </transformers>
             </configuration>

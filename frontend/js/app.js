@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ARUNAI — Erode Emergency Dispatch Grid
+   UyirPath — Erode Emergency Dispatch Grid
    Frontend controller: REST API integration, Leaflet operations maps,
    dispatch queue, simulation controls, road closures and analytics.
    All movement, traffic, beds and history are DEMONSTRATION data.
@@ -193,7 +193,7 @@
       response = await fetch('/api' + path, opts);
     } catch (err) {
       state.apiError = true;
-      throw new ApiError('Cannot reach the ARUNAI server. Check that the Java process is running.', 0, 'NETWORK');
+      throw new ApiError('Cannot reach the UyirPath server. Check that the Java process is running.', 0, 'NETWORK');
     }
     let data = null;
     try { data = await response.json(); } catch (err) { data = null; }
@@ -2460,7 +2460,7 @@
       renderCurrentScreen();
       drawOpsMap();
     } catch (err) {
-      toastError(err, 'ARUNAI could not load');
+      toastError(err, 'UyirPath could not load');
       renderGlobal();
     }
     setInterval(pollCore, 2500);

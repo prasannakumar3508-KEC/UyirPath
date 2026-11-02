@@ -1,4 +1,4 @@
-# ARUNAI REST API
+# UyirPath REST API
 
 Base URL: `http://localhost:8080/api`
 
@@ -27,7 +27,7 @@ read-only; state changes require `POST`/`PUT`.
 ```json
 {
   "status": "ok",
-  "product": "ARUNAI",
+  "product": "UyirPath",
   "subtitle": "Erode Emergency Dispatch Grid",
   "version": "1.0.0",
   "time": "2026-11-01T08:35:15Z",

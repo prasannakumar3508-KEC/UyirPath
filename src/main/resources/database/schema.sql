@@ -1,4 +1,4 @@
--- ARUNAI Emergency Dispatch Grid - SQLite schema
+-- UyirPath Emergency Dispatch Grid - SQLite schema
 -- All timestamps are ISO-8601 UTC strings unless the column name ends in _at_ms.
 
 CREATE TABLE IF NOT EXISTS settings (

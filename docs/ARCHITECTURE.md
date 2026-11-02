@@ -1,4 +1,4 @@
-# ARUNAI Architecture
+# UyirPath Architecture
 
 ## 1. Design goals
 
@@ -35,7 +35,7 @@ flowchart TB
   end
 
   subgraph Data
-    DB[("SQLite<br/>data/arunai.db")]
+    DB[("SQLite<br/>data/uyirpath.db")]
     CACHE[("OSM cache<br/>data/osm/erode-network.json")]
   end
 

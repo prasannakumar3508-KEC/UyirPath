@@ -1,6 +1,6 @@
-# UYIRPATH — Erode Emergency Dispatch Grid
+# UyirPath — Erode Emergency Dispatch Grid
 
-UYIRPATH is a self-contained emergency ambulance dispatch and route-optimisation
+UyirPath is a self-contained emergency ambulance dispatch and route-optimisation
 system for Erode, Tamil Nadu. It uses **real OpenStreetMap road geometry**,
 a **custom Java 21 Dijkstra engine**, SQLite persistence, and a vanilla
 JavaScript/Leaflet operations interface.
@@ -47,7 +47,7 @@ and defended line by line.
 The prepared workspace already contains the imported OSM cache in `data/osm/`
 and the SQLite database in `data/`. Those two artefacts are ignored by Git
 because of their size; if you copy only the source tree, run
-`java -jar target/arunai-dispatch.jar --import-osm` once (or restore both
+`java -jar target/uyirpath-dispatch.jar --import-osm` once (or restore both
 files) before starting the server.
 
 ---
@@ -57,7 +57,7 @@ files) before starting the server.
 ```powershell
 # Windows PowerShell (from the project root)
 .\mvnw.cmd -DskipTests package
-java -jar target\arunai-dispatch.jar
+java -jar target\uyirpath-dispatch.jar
 ```
 
 Open <http://localhost:8080>.
@@ -66,7 +66,7 @@ On macOS/Linux:
 
 ```bash
 ./mvnw -DskipTests package
-java -jar target/arunai-dispatch.jar
+java -jar target/uyirpath-dispatch.jar
 ```
 
 Useful commands:
@@ -76,16 +76,16 @@ Useful commands:
 ./mvnw test
 
 # Re-import real Erode roads from Overpass and exit
-java -jar target/arunai-dispatch.jar --import-osm
+java -jar target/uyirpath-dispatch.jar --import-osm
 
 # Reset operational data, restore five ambulances/hospitals, seed labelled demo history
-java -jar target/arunai-dispatch.jar --reset-demo --seed-history
+java -jar target/uyirpath-dispatch.jar --reset-demo --seed-history
 
 # Choose another port
-java -jar target/arunai-dispatch.jar --port 9090
+java -jar target/uyirpath-dispatch.jar --port 9090
 ```
 
-Environment variable `ARUNAI_DB` overrides the database path. See
+Environment variable `UYIRPATH_DB` overrides the database path. See
 `config/example.env`.
 
 ---
@@ -120,7 +120,7 @@ are not real-world feeds.
 
 ```text
 MPMAIN/
-├─ src/main/java/com/arunai/dispatch/
+├─ src/main/java/com/uyirpath/dispatch/
 │  ├─ App.java                  entry point, wiring, CLI
 │  ├─ config/AppConfig.java     defaults and speed assumptions
 │  ├─ graph/                    RoadGraph, Dijkstra, GeoMath, RouteResult
@@ -132,7 +132,7 @@ MPMAIN/
 ├─ src/main/resources/database/schema.sql
 ├─ src/test/java/               15 JUnit 5 tests
 ├─ frontend/                    HTML/CSS/vanilla JS + vendored Leaflet 1.9.4
-├─ data/arunai.db              prepared SQLite database
+├─ data/uyirpath.db              prepared SQLite database
 ├─ data/osm/                   cached OSM response
 ├─ docs/                       architecture, API, database, testing, review pack
 └─ config/                     configuration example

@@ -1,6 +1,6 @@
 # OpenStreetMap Data Verification
 
-ARUNAI does not invent road geometry. The routing graph is built from an
+UyirPath does not invent road geometry. The routing graph is built from an
 OpenStreetMap extract of the Erode area.
 
 ---
@@ -28,7 +28,7 @@ The raw JSON response is kept so the graph can be rebuilt without another
 download:
 
 ```bash
-java -jar target/arunai-dispatch.jar --import-osm   # live download
+java -jar target/uyirpath-dispatch.jar --import-osm   # live download
 # or from the Settings screen / API: POST /api/osm {"mode":"cache"}
 ```
 
